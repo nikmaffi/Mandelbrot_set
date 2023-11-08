@@ -3,7 +3,7 @@ APP=mandelbrot
 LIB=$(addprefix -l, SDL2)
 
 RELEASE=-O2
-DEBUG=-ggdb -Wall -Wextra -DDEBUG_MANDELBROT_FRACTAL
+DEBUG=-ggdb -Wall -Wextra
 
 CC=g++ -std=c++20
 
