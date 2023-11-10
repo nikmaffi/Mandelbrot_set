@@ -5,14 +5,17 @@
 #include <SDL2/SDL.h>
 
 //Window width
-#define WIDTH 800
+#define WIDTH 800.0
 //Window height
-#define HEIGHT 600
+#define HEIGHT 600.0
+
+//Window ratio
+#define RATIO ((HEIGHT) / (WIDTH))
 
 //Max iterations to check divergence
-#define MAX_ITERS 500
+#define MAX_ITERS 1e3
 //Divergence trigger
-#define TRIGGER 1000000.0
+#define TRIGGER 1e6
 
 //This function map the value of x, in the interval [a1, b1], into the interval [a2, b2]
 long double map(long double x, long double a1, long double b1, long double a2, long double b2) {    
@@ -35,7 +38,7 @@ int diverges(const std::complex<long double> c, unsigned max_iters, long double 
         }
     }
 
-    return 0;
+    return max_iters;
 }
 
 int main() {
@@ -74,7 +77,7 @@ int main() {
                 div = diverges(
                     {
                         map(x, 0.0, WIDTH, min, max),
-                        map(y, 0.0, HEIGHT, min * HEIGHT/WIDTH, max * HEIGHT/WIDTH)
+                        map(y, 0.0, HEIGHT, min * RATIO, max * RATIO)
                     }, MAX_ITERS, TRIGGER
                 );
 
@@ -83,7 +86,8 @@ int main() {
                     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
                 } else {
                     //The function diverges (set the color based on x + 1.8*x + 3*x)
-                    SDL_SetRenderDrawColor(renderer, (Uint8)div, (Uint8)(div * 1.8), (Uint8)(div * 3), 255);
+                    //SDL_SetRenderDrawColor(renderer, (Uint8)div, (Uint8)(div * 1.8), (Uint8)(div * 3), 255);
+                    SDL_SetRenderDrawColor(renderer, (Uint8)(std::log2(div)), (Uint8)(std::log2(div) * 9), (Uint8)(std::log2(div) * 20), 255);
                 }
 
                 //Put the pixel
