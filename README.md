@@ -1,5 +1,5 @@
 # Mandelbrot_set
-Mandelbrot Set simulation written in C++ and SDL 2
+Mandelbrot set simulation written in C++ and SDL 2
 
 The Mandelbrot set is defined in the complex plane as the complex numbers $` c `$ for which the function $` f_c(z) = z^2 + c `$ does not diverge to infinity when iterated starting at $` z = 0 `$.
 
