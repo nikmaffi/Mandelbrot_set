@@ -29,7 +29,7 @@ Here some images computed with different functions:
 
 ---
 
-There is also am app that draws the Mandelbrot set into a text file.
+There is also a version that draws the Mandelbrot set into a text file.
 Here the result:
 
 <img alt="vintage" src="./img/vintage.png">
