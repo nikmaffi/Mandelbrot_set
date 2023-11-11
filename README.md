@@ -26,3 +26,10 @@ Here some images computed with different functions:
 
 - $` f_c(z) = c - \sin{z} -\cos{z} `$
 <img alt="c - sin(z) - cos(z)" src="./img/c-sin(z)-cos(z).bmp">
+
+---
+
+There is also am app that draws the Mandelbrot set into a text file.
+Here the result:
+
+<img alt="vintage" src="./img/vintage.png">
