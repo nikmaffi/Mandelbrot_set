@@ -12,8 +12,14 @@ all: $(APP)
 $(APP): main.cpp
 	$(CC) $(RELEASE) $^ -o $(APP) $(LIB)
 
+vintage: vintage.cpp
+	$(CC) $(RELEASE) $^ -o $(APP)
+
 debug: main.cpp
 	$(CC) $(DEBUG) $^ -o $(APP) $(LIB)
+
+debug_vintage: vintage.cpp
+	$(CC) $(DEBUG) $^ -o $(APP)
 
 clean:
 	rm $(APP)

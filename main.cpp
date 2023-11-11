@@ -17,6 +17,10 @@
 //Divergence trigger
 #define TRIGGER 1e6
 
+//Used to scale the values of c
+const long double MIN = -2.5;
+const long double MAX = 2.5;
+
 //This function map the value of x, in the interval [a1, b1], into the interval [a2, b2]
 long double map(long double x, long double a1, long double b1, long double a2, long double b2) {    
     return a2 + x * (b2 - a2) / (b1 - a1);
@@ -53,10 +57,6 @@ int main() {
     //Used tho check if the function diverges giving a certain value of c
     unsigned div = 0;
 
-    //Used to scale the values of c
-    long double min = -2.5;
-    long double max = 2.5;
-
     //SDL env initialization
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer);
@@ -76,8 +76,8 @@ int main() {
                 //Mapping the value of c between -scale-scale*i and scale+scale*i (zooming and centering)
                 div = diverges(
                     {
-                        map(x, 0.0, WIDTH, min, max),
-                        map(y, 0.0, HEIGHT, min * RATIO, max * RATIO)
+                        map(x, 0.0, WIDTH, MIN, MAX),
+                        map(y, 0.0, HEIGHT, MIN * RATIO, MAX * RATIO)
                     }, MAX_ITERS, TRIGGER
                 );
 
