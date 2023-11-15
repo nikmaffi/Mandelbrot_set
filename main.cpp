@@ -1,25 +1,7 @@
 #include <complex>
 #include <numeric>
-
-//For graphics
-#include <SDL2/SDL.h>
-
-//Window width
-#define WIDTH 800.0
-//Window height
-#define HEIGHT 600.0
-
-//Window ratio
-#define RATIO ((HEIGHT) / (WIDTH))
-
-//Max iterations to check divergence
-#define MAX_ITERS 1e3
-//Divergence trigger
-#define TRIGGER 1e6
-
-//Used to scale the values of c
-const long double MIN = -2.5;
-const long double MAX = 2.5;
+#include <iostream>
+#include <fstream>
 
 //This function map the value of x, in the interval [a1, b1], into the interval [a2, b2]
 long double map(long double x, long double a1, long double b1, long double a2, long double b2) {    
@@ -45,65 +27,86 @@ int diverges(const std::complex<long double> c, unsigned max_iters, long double 
     return max_iters;
 }
 
-int main() {
-    //Defining SDL window, renderer, event
-    SDL_Window *window = nullptr;
-    SDL_Renderer *renderer = nullptr;
-    SDL_Event event;
+//This function produce a character in [min, max] based on the value of div
+char draw(char min, char max, unsigned div) {
+    return div % (max - min) + min;
+}
 
-    //Used for exit the "game loop"
-    bool done = false;
+int main(int argc, const char *argv[]) {
+    //File for mandelbrot set drawing
+    std::fstream stream("mandelbrot.draw", std::ios::out | std::ios::binary);
+
+    unsigned WIDTH = 80; //Terminal max characters (columns)
+    unsigned HEIGHT = 24; //Terminal max characters (rows)
+    long double RATIO = HEIGHT / (long double)WIDTH; //Terminal ratio
+
+    unsigned MAX_ITERS = 1e3; //Max iterations to check divergence
+    unsigned TRIGGER = 1e6; //Divergence trigger
 
     //Used tho check if the function diverges giving a certain value of c
     unsigned div = 0;
 
-    //SDL env initialization
-    SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer);
+    //Character to print
+    char c = '\0';
 
-    //Waiting ESC pressed or window closing
-    while(!done) {
-        //Events checker
-        while(SDL_PollEvent(&event) != 0) {
-            if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
-                done = true;
-            }
-        }
+    //Used to scale the values of c
+    long double min = -3;
+    long double max = 3;
 
-        //Computing every pixel in the window
-        for(int x = 0; x < WIDTH; x++) {
-            for(int y = 0; y < HEIGHT; y++) {                
-                //Mapping the value of c between -scale-scale*i and scale+scale*i (zooming and centering)
-                div = diverges(
-                    {
-                        map(x, 0.0, WIDTH, MIN, MAX),
-                        map(y, 0.0, HEIGHT, MIN * RATIO, MAX * RATIO)
-                    }, MAX_ITERS, TRIGGER
-                );
+    if(argc == 7) {
+        //Getting values for drawing the set
+        WIDTH = strtoul(argv[1], nullptr, 10);
+        HEIGHT = strtoul(argv[2], nullptr, 10);
 
-                if(div == MAX_ITERS) {
-                    //The function does not diverge
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                } else {
-                    //The function diverges (set the color based on x + 1.8*x + 3*x)
-                    //SDL_SetRenderDrawColor(renderer, (Uint8)div, (Uint8)(div * 1.8), (Uint8)(div * 3), 255);
-                    SDL_SetRenderDrawColor(renderer, (Uint8)(std::log2(div)), (Uint8)(std::log2(div) * 9), (Uint8)(std::log2(div) * 20), 255);
-                }
+        RATIO = HEIGHT / (long double) WIDTH;
 
-                //Put the pixel
-                SDL_RenderDrawPoint(renderer, x, y);
-            }
-        }
+        min = strtold(argv[3], nullptr);
+        max = strtold(argv[4], nullptr);
 
-        //Rendering
-        SDL_RenderPresent(renderer);
+        MAX_ITERS = strtoul(argv[5], nullptr, 10);
+        TRIGGER = strtoul(argv[6], nullptr, 10);
+    } else if(argc != 1) {
+        std::cout << "\nSYNOPSIS:\n"
+            << "\t" << argv[0] << " width height min max iters trig\n\n"
+            << "OPTIONS:\n"
+            << "\t" << " <width>:  Maximun characters columns.\n\t\t   Default is " << WIDTH << ".\n\n"
+            << "\t" << "<height>:  Maximum characters rows.\n\t\t   Default is " << HEIGHT << ".\n\n"
+            << "\t" << "   <min>:  Minimum real number considered.\n\t\t   Default is " << min << ".\n\n"
+            << "\t" << "   <max>:  Maximum real number considered.\n\t\t   Default is " << max << ".\n\n"
+            << "\t" << " <iters>:  Numbers of iterations to check divergence.\n\t\t   Default is " << MAX_ITERS << ".\n\n"
+            << "\t" << "  <trig>:  Trigger value corresponding to infinity.\n\t\t   Default is " << TRIGGER << ".\n\n";
+
+        return EXIT_FAILURE;
     }
 
-    //Program end
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    //Computing every pixel in the window
+    for(unsigned y = 0; y < HEIGHT; y++) {
+        for(unsigned x = 0; x < WIDTH; x++) {                
+            //Mapping the value of c between -scale-scale*i and scale+scale*i (zooming and centering)
+            div = diverges(
+                {
+                    map(x, 0.0, WIDTH, min, max),
+                    map(y, 0.0, HEIGHT, min * RATIO, max * RATIO)
+                }, MAX_ITERS, TRIGGER
+            );
 
-    SDL_Quit();
+            if(div == MAX_ITERS) {
+                //The function does not diverge
+                c = ' ';
+            } else {
+                //The function diverges (set a char between 'a' and 'z' based on div)
+                c = draw('a', 'z', div);
+            }
+
+            //Writing the caracter into the file
+            stream.write(&c, sizeof(char));
+        }
+
+        //New row
+        stream.write("\n", sizeof(char));
+    }
+
+    stream.close();
 
     return EXIT_SUCCESS;
 }
