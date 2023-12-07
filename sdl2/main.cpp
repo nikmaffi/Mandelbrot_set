@@ -23,7 +23,7 @@ const long double MAX = 2.5;
 
 //This function map the value of x, in the interval [a1, b1], into the interval [a2, b2]
 long double map(long double x, long double a1, long double b1, long double a2, long double b2) {    
-    return a2 + x * (b2 - a2) / (b1 - a1);
+    return a2 + (x - a1) * (b1 - a1) / (b2 - a2);
 }
 
 int diverges(const std::complex<long double> c, unsigned max_iters, long double trig) {
@@ -86,8 +86,7 @@ int main() {
                     //The function does not diverge
                     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
                 } else {
-                    //The function diverges (set the color based on x + 1.8*x + 3*x)
-                    //SDL_SetRenderDrawColor(renderer, (Uint8)div, (Uint8)(div * 1.8), (Uint8)(div * 3), 255);
+                    //The function diverges (set the color)
                     SDL_SetRenderDrawColor(renderer, (Uint8)(std::log2(div)), (Uint8)(std::log2(div) * 9), (Uint8)(std::log2(div) * 20), 255);
                 }
 
