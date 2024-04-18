@@ -26,7 +26,7 @@ const long double MAX = 2.5;
 
 //This function map the value of x, in the interval [a1, b1], into the interval [a2, b2]
 long double map(long double x, long double a1, long double b1, long double a2, long double b2) {    
-    return a2 + (x - a1) * (b1 - a1) / (b2 - a2);
+    return a2 + (x - a1) * (b2 - a2) / (b1 - a1);
 }
 
 int diverges(const std::complex<long double> c, unsigned max_iters, long double trig) {
