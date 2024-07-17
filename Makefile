@@ -2,8 +2,7 @@ APP=mandelbrot
 
 LIB_SDL2=$(addprefix -l, SDL2)
 
-DEFINE_SFML=-DSFML_STATIC
-LIB_SFML=$(addprefix -l, sfml-graphics-s sfml-window-s sfml-system-s opengl32 winmm gdi32 freetype)
+LIB_SFML=$(addprefix -l, sfml-graphics sfml-window sfml-system)
 
 RELEASE=-O2
 DEBUG=-ggdb -Wall -Wextra
@@ -28,10 +27,10 @@ debug_sdl2: sdl2/main.cpp
 
 
 sfml: sfml/main.cpp
-	$(CC) $(RELEASE) $(DEFINE_SFML) $^ -o $(APP) $(LIB_SFML)
+	$(CC) $(RELEASE) $^ -o $(APP) $(LIB_SFML)
 
 debug_sfml: sfml/main.cpp
-	$(CC) $(DEBUG) $(DEFINE_SFML) $^ -o $(APP) $(LIB_SFML)
+	$(CC) $(DEBUG) $^ -o $(APP) $(LIB_SFML)
 
 
 clean:
