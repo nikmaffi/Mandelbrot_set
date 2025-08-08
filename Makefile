@@ -2,10 +2,10 @@ APP=mandelbrot
 
 LIB_SDL2=$(addprefix -l, SDL2)
 
-LIB_SFML=$(addprefix -l, sfml-graphics sfml-window sfml-system)
+LIB_RAYLIB=$(addprefix -l, raylib GL m pthread dl rt X11)
 
-RELEASE=-O2
-DEBUG=-ggdb -Wall -Wextra
+RELEASE=-O2 -s
+DEBUG=-ggdb -Wall -Wextra -fsanitize=address
 
 CC=g++ -std=c++20
 
@@ -19,19 +19,19 @@ debug: main.cpp
 	$(CC) $(DEBUG) $^ -o $(APP)
 
 
-sdl2: sdl2/main.cpp
+sdl: sdl2/main.cpp
 	$(CC) $(RELEASE) $^ -o $(APP) $(LIB_SDL2)
 
-debug_sdl2: sdl2/main.cpp
+debug_sdl: sdl2/main.cpp
 	$(CC) $(DEBUG) $^ -o $(APP) $(LIB_SDL2)
 
 
-sfml: sfml/main.cpp
-	$(CC) $(RELEASE) $^ -o $(APP) $(LIB_SFML)
+raylib: raylib/main.cpp
+	$(CC) $(RELEASE) $^ -o $(APP) $(LIB_RAYLIB)
 
-debug_sfml: sfml/main.cpp
-	$(CC) $(DEBUG) $^ -o $(APP) $(LIB_SFML)
+debug_raylib: raylib/main.cpp
+	$(CC) $(DEBUG) $^ -o $(APP) $(LIB_RAYLIB)
 
 
 clean:
-	rm $(APP) 
+	rm $(APP)
